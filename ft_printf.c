@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: evillca- <evillca-@student.42madrid.com>   #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-01-28 15:55:48 by evillca-          #+#    #+#             */
+/*   Updated: 2025-01-28 15:55:48 by evillca-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 #include <stdio.h> // eliminar
 
-static void handle_char(char const *format, va_list argptr, int *count)
+static void	handle_char(char const *format, va_list argptr, int *count)
 {
-	int	aux;
-	char *str;
+	int		aux;
+	char	*str;
 
 	if (*format == 'c')
 	{
@@ -16,12 +28,11 @@ static void handle_char(char const *format, va_list argptr, int *count)
 		str = va_arg(argptr, char *);
 		ft_putstr(str, count);
 	}
-
 }
 
-static void handle_pointer(char const *format, va_list argptr, int *count)
+static void	handle_pointer(char const *format, va_list argptr, int *count)
 {
-	unsigned long long addr;
+	unsigned long long	addr;
 
 	if (*format == 'p')
 	{
@@ -36,7 +47,7 @@ static void handle_pointer(char const *format, va_list argptr, int *count)
 	}
 }
 
-static void handle_numbers(char const *format, va_list argptr, int *count)
+static void	handle_numbers(char const *format, va_list argptr, int *count)
 {
 	if (*format == 'd' || *format == 'i')
 		ft_putnbr(va_arg(argptr, int), count);
@@ -55,16 +66,16 @@ static void	parse_format(char const *format, va_list argptr, int *count)
 	else if (*format == 'p')
 		handle_pointer(format, argptr, count);
 	else if (*format == 'd' || *format == 'i' || *format == 'u'
-			|| *format == 'x' || *format == 'X')
+		|| *format == 'x' || *format == 'X')
 		handle_numbers(format, argptr, count);
 	else if (*format == '%')
 		*count += write(1, "%", 1);
 }
 
-int		ft_printf(char const *format, ...)
+int	ft_printf(char const *format, ...)
 {
-	int count;
-	va_list argptr;
+	int		count;
+	va_list	argptr;
 
 	count = 0;
 	va_start(argptr, format);
@@ -73,20 +84,13 @@ int		ft_printf(char const *format, ...)
 		if (*format == '%' && *(format + 1)) // if (*format == '%')
 		{
 			//format++;
-			parse_format(++format,argptr, &count);
+			parse_format(++format, argptr, &count);
 			//printf("|%s|",format);
 		}
 		else
-			write(1, format, 1); // se puede cambiar por ft_putchar
+			count += write(1, format, 1); // se puede cambiar por ft_putchar
 		format++;
 	}
 	va_end(argptr);
 	return (count);
 }
-
-/*
-va_list args; declara una variable para almacenar los argumentos.
-va_start(args, format); inicializa args para que apunte al primer argumento variádico.
-va_arg(args, type) obtiene el siguiente argumento del tipo especificado.
-va_end(args); limpia args.
-*/
