@@ -3,7 +3,7 @@ NAME = libftprintf.a
 SRC = ft_printf.c utils.c
 OBJ = $(SRC:.c=.o)
 
-CC = CC
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 AR = ar rcs

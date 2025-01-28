@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include <stdio.h> // eliminar
 
 static void	handle_char(char const *format, va_list argptr, int *count)
 {
@@ -81,14 +80,12 @@ int	ft_printf(char const *format, ...)
 	va_start(argptr, format);
 	while (*format)
 	{
-		if (*format == '%' && *(format + 1)) // if (*format == '%')
+		if (*format == '%' && *(format + 1))
 		{
-			//format++;
 			parse_format(++format, argptr, &count);
-			//printf("|%s|",format);
 		}
 		else
-			count += write(1, format, 1); // se puede cambiar por ft_putchar
+			count += write(1, format, 1);
 		format++;
 	}
 	va_end(argptr);
