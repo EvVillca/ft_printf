@@ -12,48 +12,48 @@
 
 #include "ft_printf.h"
 
-static void	conver_pointer(char format, va_list argptr, int *count)
+static int	conver_pointer(unsigned long long addr)
 {
-	unsigned long long	addr;
+	int					count;
 
-	if (format == 'p')
+	count = 0;
+	if (addr == 0)
 	{
-		addr = va_arg(argptr, unsigned long long);
-		if (addr == 0)
-		{
-			*count += write(1, "(nil)", 5);
-			return ;
-		}
-		*count += write(1, "0x", 2);
-		ft_base(addr, "0123456789abcdef", 16, count);
+		count += write(1, "(nil)", 5);
+		return (count);
 	}
+	count += write(1, "0x", 2);
+	count += ft_base(addr, "0123456789abcdef", 16);
+	return (count);
 }
 
-static void	conver_numbers(char format, va_list argptr, int *count)
+static int	conver_numbers(char format, va_list argptr)
 {
 	if (format == 'd' || format == 'i')
-		ft_putnbr(va_arg(argptr, int), count);
+		return (ft_putnbr(va_arg(argptr, int)));
 	else if (format == 'u')
-		ft_base(va_arg(argptr, unsigned int), "0123456789", 10, count);
+		return (ft_base(va_arg(argptr, unsigned int), "0123456789", 10));
 	else if (format == 'x')
-		ft_base(va_arg(argptr, unsigned int), "0123456789abcdef", 16, count);
+		return (ft_base(va_arg(argptr, unsigned int), "0123456789abcdef", 16));
 	else if (format == 'X')
-		ft_base(va_arg(argptr, unsigned int), "0123456789ABCDEF", 16, count);
+		return (ft_base(va_arg(argptr, unsigned int), "0123456789ABCDEF", 16));
+	return (0);
 }
 
-static void	conver_format(char format, va_list argptr, int *count)
+static int	conver_format(char format, va_list argptr)
 {
 	if (format == 'c')
-		*count += ft_putchar(va_arg(argptr, int));
+		return (ft_putchar(va_arg(argptr, int)));
 	else if (format == 's')
-		*count += ft_putstr(va_arg(argptr, char *));
+		return (ft_putstr(va_arg(argptr, char *)));
 	else if (format == 'p')
-		conver_pointer(format, argptr, count);
+		return (conver_pointer(va_arg(argptr, unsigned long long)));
 	else if (format == 'd' || format == 'i' || format == 'u'
 		|| format == 'x' || format == 'X')
-		conver_numbers(format, argptr, count);
+		return (conver_numbers(format, argptr));
 	else if (format == '%')
-		*count += ft_putchar('%');
+		return (ft_putchar('%'));
+	return (1);
 }
 
 int	ft_printf(char const *format, ...)
@@ -70,7 +70,7 @@ int	ft_printf(char const *format, ...)
 		if (format[i] == '%')
 		{
 			i++;
-			conver_format(format[i], argptr, &count);
+			count += conver_format(format[i], argptr);
 		}
 		else
 			count += ft_putchar(format[i]);

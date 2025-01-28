@@ -12,29 +12,35 @@
 
 #include "ft_printf.h"
 
-void	ft_base(unsigned long long n, char *base, int base_len, int *count)
+int	ft_base(unsigned long long n, char *base, int base_len)
 {
 	char	number;
+	int		count;
 
+	count = 0;
 	if (n >= (unsigned long long)base_len)
-		ft_base(n / base_len, base, base_len, count);
+		count += ft_base(n / base_len, base, base_len);
 	number = base[n % base_len];
-	*count += ft_putchar(number);
+	count += ft_putchar(number);
+	return (count);
 }
 
-void	ft_putnbr(int nbr, int *count)
+int	ft_putnbr(int nbr)
 {
+	int				count;
 	long long int	n;
 
 	n = nbr;
+	count = 0;
 	if (n < 0)
 	{
-		*count += ft_putchar('-');
+		count += ft_putchar('-');
 		n = -n;
 	}
 	if (n > 9)
-		ft_putnbr(n / 10, count);
-	*count += ft_putchar("0123456789"[n % 10]);
+		count += ft_putnbr(n / 10);
+	count += ft_putchar("0123456789"[n % 10]);
+	return (count);
 }
 
 int	ft_putstr(char *s)

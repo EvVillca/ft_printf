@@ -19,7 +19,7 @@
 int		ft_printf(char const *format, ...);
 int		ft_putchar(char c);
 int		ft_putstr(char *s);
-void	ft_putnbr(int nbr, int *count);
-void	ft_base(unsigned long long n, char *base, int base_len, int *count);
+int		ft_putnbr(int nbr);
+int		ft_base(unsigned long long n, char *base, int base_len);
 
 #endif
