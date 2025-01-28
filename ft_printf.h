@@ -17,8 +17,9 @@
 # include <unistd.h>
 
 int		ft_printf(char const *format, ...);
-void	ft_putstr(char *str, int *count);
+int		ft_putchar(char c);
+int		ft_putstr(char *s);
 void	ft_putnbr(int nbr, int *count);
-void	print_base(unsigned long long n, char *base, int base_len, int *count);
+void	ft_base(unsigned long long n, char *base, int base_len, int *count);
 
 #endif

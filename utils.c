@@ -12,14 +12,14 @@
 
 #include "ft_printf.h"
 
-void	print_base(unsigned long long n, char *base, int base_len, int *count)
+void	ft_base(unsigned long long n, char *base, int base_len, int *count)
 {
 	char	number;
 
 	if (n >= (unsigned long long)base_len)
-		print_base(n / base_len, base, base_len, count);
+		ft_base(n / base_len, base, base_len, count);
 	number = base[n % base_len];
-	*count += write(1, &number, 1);
+	*count += ft_putchar(number);
 }
 
 void	ft_putnbr(int nbr, int *count)
@@ -29,21 +29,33 @@ void	ft_putnbr(int nbr, int *count)
 	n = nbr;
 	if (n < 0)
 	{
-		*count += write(1, "-", 1);
+		*count += ft_putchar('-');
 		n = -n;
 	}
-	if (n >= 10)
+	if (n > 9)
 		ft_putnbr(n / 10, count);
-	*count += write(1, &"0123456789"[n % 10], 1);
+	*count += ft_putchar("0123456789"[n % 10]);
 }
 
-void	ft_putstr(char *str, int *count)
+int	ft_putstr(char *s)
 {
-	if (!str)
+	int	i;
+	int	count;
+
+	count = 0;
+	if (!s)
 	{
-		*count += write(1, "(null)", 6);
-		return ;
+		count += write(1, "(null)", 6);
+		return (count);
 	}
-	while (*str)
-		*count += write(1, str++, 1);
+	i = 0;
+	count = 0;
+	while (s[i])
+		count += ft_putchar(s[i++]);
+	return (count);
+}
+
+int	ft_putchar(char c)
+{
+	return (write(1, &c, 1));
 }

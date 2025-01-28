@@ -12,28 +12,11 @@
 
 #include "ft_printf.h"
 
-static void	handle_char(char const *format, va_list argptr, int *count)
-{
-	int		aux;
-	char	*str;
-
-	if (*format == 'c')
-	{
-		aux = va_arg(argptr, int);
-		*count += write(1, &aux, 1);
-	}
-	else if (*format == 's')
-	{
-		str = va_arg(argptr, char *);
-		ft_putstr(str, count);
-	}
-}
-
-static void	handle_pointer(char const *format, va_list argptr, int *count)
+static void	conver_pointer(char format, va_list argptr, int *count)
 {
 	unsigned long long	addr;
 
-	if (*format == 'p')
+	if (format == 'p')
 	{
 		addr = va_arg(argptr, unsigned long long);
 		if (addr == 0)
@@ -42,51 +25,56 @@ static void	handle_pointer(char const *format, va_list argptr, int *count)
 			return ;
 		}
 		*count += write(1, "0x", 2);
-		print_base(addr, "0123456789abcdef", 16, count);
+		ft_base(addr, "0123456789abcdef", 16, count);
 	}
 }
 
-static void	handle_numbers(char const *format, va_list argptr, int *count)
+static void	conver_numbers(char format, va_list argptr, int *count)
 {
-	if (*format == 'd' || *format == 'i')
+	if (format == 'd' || format == 'i')
 		ft_putnbr(va_arg(argptr, int), count);
-	else if (*format == 'u')
-		print_base(va_arg(argptr, unsigned int), "0123456789", 10, count);
-	else if (*format == 'x')
-		print_base(va_arg(argptr, unsigned int), "0123456789abcdef", 16, count);
-	else if (*format == 'X')
-		print_base(va_arg(argptr, unsigned int), "0123456789ABCDEF", 16, count);
+	else if (format == 'u')
+		ft_base(va_arg(argptr, unsigned int), "0123456789", 10, count);
+	else if (format == 'x')
+		ft_base(va_arg(argptr, unsigned int), "0123456789abcdef", 16, count);
+	else if (format == 'X')
+		ft_base(va_arg(argptr, unsigned int), "0123456789ABCDEF", 16, count);
 }
 
-static void	parse_format(char const *format, va_list argptr, int *count)
+static void	conver_format(char format, va_list argptr, int *count)
 {
-	if (*format == 'c' || *format == 's')
-		handle_char(format, argptr, count);
-	else if (*format == 'p')
-		handle_pointer(format, argptr, count);
-	else if (*format == 'd' || *format == 'i' || *format == 'u'
-		|| *format == 'x' || *format == 'X')
-		handle_numbers(format, argptr, count);
-	else if (*format == '%')
-		*count += write(1, "%", 1);
+	if (format == 'c')
+		*count += ft_putchar(va_arg(argptr, int));
+	else if (format == 's')
+		*count += ft_putstr(va_arg(argptr, char *));
+	else if (format == 'p')
+		conver_pointer(format, argptr, count);
+	else if (format == 'd' || format == 'i' || format == 'u'
+		|| format == 'x' || format == 'X')
+		conver_numbers(format, argptr, count);
+	else if (format == '%')
+		*count += ft_putchar('%');
 }
 
 int	ft_printf(char const *format, ...)
 {
 	int		count;
+	int		i;
 	va_list	argptr;
 
 	count = 0;
 	va_start(argptr, format);
-	while (*format)
+	i = 0;
+	while (format[i])
 	{
-		if (*format == '%' && *(format + 1))
+		if (format[i] == '%')
 		{
-			parse_format(++format, argptr, &count);
+			i++;
+			conver_format(format[i], argptr, &count);
 		}
 		else
-			count += write(1, format, 1);
-		format++;
+			count += ft_putchar(format[i]);
+		i++;
 	}
 	va_end(argptr);
 	return (count);
